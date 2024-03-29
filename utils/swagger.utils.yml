@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: "Food Delivery API"
+  description: "API documentation for food delivery services"
+servers:
+  - url: "https://food-delivery-api-8tqe.onrender.com/"
+tags:
+  - name: Items
+    description: Operations related to items
+  - name: Organizations
+    description: Operations related to organizations
+  - name: Pricing
+    description: Operations related to pricing
+  - name: PricingController
+    description: Operations related to pricing endpoints
+paths:
+  /items:
+    post:
+      tags:
+        - Items
+      summary: Create a new item
+      parameters:
+        - in: body
+          name: item
+          required: true
+          schema:
+            $ref: "#/definitions/Item"
+      responses:
+        200:
+          description: ID of the created item.
+          schema:
+            type: integer
+            example: 1
+  /organizations:
+    post:
+      tags:
+        - Organizations
+      summary: Create a new organization
+      parameters:
+        - in: body
+          name: organization
+          required: true
+          schema:
+            $ref: "#/definitions/Organization"
+      responses:
+        200:
+          description: ID of the created organization.
+          schema:
+            type: integer
+            example: 1
+  /pricing:
+    post:
+      tags:
+        - Pricing
+      summary: Create pricing
+      parameters:
+        - in: body
+          name: pricing
+          required: true
+          schema:
+            $ref: "#/definitions/Pricing"
+      responses:
+        200:
+          description: Pricing created successfully.
+    get:
+      tags:
+        - Pricing
+      summary: Get pricing by organization and item type
+      parameters:
+        - in: query
+          name: organizationId
+          required: true
+          type: integer
+          description: The ID of the organization.
+        - in: query
+          name: itemType
+          required: true
+          type: string
+          description: The type of the item.
+      responses:
+        200:
+          description: Pricing information retrieved successfully.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Pricing"
+  /pricing/calculatePrice:
+    post:
+      tags:
+        - PricingController
+      summary: Calculate total price
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PriceRequestBody"
+      responses:
+        200:
+          description: Total price calculated successfully.
+          schema:
+            type: object
+            properties:
+              total_price:
+                type: number
+                example: 50.25
+        500:
+          description: An error occurred while calculating the total price.
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+components:
+  schemas:
+    OrgCreateBody:
+      type: object
+      properties:
+        name:
+          type: string
+      example:
+        name: org x
+
+    ItemCreateBody:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+      example:
+        type: perishable
+        description: Bakery Product
+
+    PricingCreateBody:
+      type: object
+      properties:
+        organization_id:
+          type: integer
+        item_id:
+          type: integer
+        zone:
+          type: string
+        base_distance_in_km:
+          type: number
+        km_price:
+          type: number
+        fix_price:
+          type: number
+      example:
+        organization_id: 1
+        item_id: 1
+        zone: south
+        base_distance_in_km: 5
+        km_price: 1.5
+        fix_price: 10
+
+    PriceRequestBody:
+      type: object
+      properties:
+        zone:
+          type: string
+        organization_id:
+          type: integer
+        total_distance:
+          type: integer
+        item_type:
+          type: string
+      example:
+        zone: south
+        organization_id: 1
+        total_distance: 12
+        item_type: perishable

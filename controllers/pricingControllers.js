@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const PricingService = require("../services/pricingService");
 
-// Endpoint to calculate total price
+//to calculate total price
 router.post("/calculatePrice", async (req, res) => {
   try {
     const { organization_id, zone, total_distance, item_type } = req.body;

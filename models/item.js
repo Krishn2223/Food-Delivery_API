@@ -1,4 +1,3 @@
-// models/item.js
 const { client } = require("../db");
 
 class Item {
