@@ -19,16 +19,17 @@ paths:
     post:
       tags:
         - Items
-      summary: Create a new item
-      parameters:
-        - in: body
-          name: item
-          required: true
-          schema:
-            $ref: "#/definitions/Item"
+      summary: Get pricing by organization and item type.
+      requestBody:
+        required: true
+        description: Enter type of the food item (perishable/non-perishable) and description.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateItem"
       responses:
         200:
-          description: ID of the created item.
+          description: created item.
           schema:
             type: integer
             example: 1
@@ -37,12 +38,13 @@ paths:
       tags:
         - Organizations
       summary: Create a new organization
-      parameters:
-        - in: body
-          name: organization
-          required: true
-          schema:
-            $ref: "#/definitions/Organization"
+      requestBody:
+        required: true
+        description: Enter a Organization name other than 'org A'
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrg"
       responses:
         200:
           description: ID of the created organization.
@@ -54,37 +56,17 @@ paths:
       tags:
         - Pricing
       summary: Create pricing
-      parameters:
-        - in: body
-          name: pricing
-          required: true
-          schema:
-            $ref: "#/definitions/Pricing"
+      requestBody:
+        required: true
+        description: Enter information as shown in example.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPrice"
       responses:
         200:
           description: Pricing created successfully.
-    get:
-      tags:
-        - Pricing
-      summary: Get pricing by organization and item type
-      parameters:
-        - in: query
-          name: organizationId
-          required: true
-          type: integer
-          description: The ID of the organization.
-        - in: query
-          name: itemType
-          required: true
-          type: string
-          description: The type of the item.
-      responses:
-        200:
-          description: Pricing information retrieved successfully.
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Pricing"
+
   /pricing/calculatePrice:
     post:
       tags:
@@ -92,10 +74,11 @@ paths:
       summary: Calculate total price
       requestBody:
         required: true
+        description: Enter all the details by refering the example.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/PriceRequestBody"
+              $ref: "#/components/schemas/CreatePricing"
       responses:
         200:
           description: Total price calculated successfully.
@@ -114,15 +97,15 @@ paths:
                 type: string
 components:
   schemas:
-    OrgCreateBody:
+    CreateOrg:
       type: object
       properties:
         name:
           type: string
       example:
-        name: org x
+        name: org A
 
-    ItemCreateBody:
+    CreateItem:
       type: object
       properties:
         type:
@@ -131,9 +114,9 @@ components:
           type: string
       example:
         type: perishable
-        description: Bakery Product
+        description: Apple
 
-    PricingCreateBody:
+    CreatePricing:
       type: object
       properties:
         organization_id:
@@ -151,12 +134,12 @@ components:
       example:
         organization_id: 1
         item_id: 1
-        zone: south
+        zone: Central
         base_distance_in_km: 5
         km_price: 1.5
-        fix_price: 10
+        fix_price: 20
 
-    PriceRequestBody:
+    RequestPrice:
       type: object
       properties:
         zone:
